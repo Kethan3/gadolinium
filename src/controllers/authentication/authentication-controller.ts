@@ -40,7 +40,7 @@ import {
   type LogInWithUsernameAndPasswordResult,
   type SignUpWithUsernameAndPasswordResult,
 } from "./authentication-types";
-import { prismaclient } from "../../extras/prisma";
+import { prismaClient } from "../../extras/prisma";
 import jwt from "jsonwebtoken";
 import { jwtsecretKey } from "../../../environment";
 
@@ -65,7 +65,7 @@ const createJWToken = (parameters: {
 export const checkIfUserExistsAlready = async (parameters: {
   username: string;
 }): Promise<boolean> => {
-  const existingUser = await prismaclient.user.findUnique({
+  const existingUser = await prismaClient.user.findUnique({
     where: {
       username: parameters.username,
     },
@@ -101,7 +101,7 @@ export const signUpWithUsernameAndpassword = async (parameters: {
       password: parameters.password,
     });
 
-    const user = await prismaclient.user.create({
+    const user = await prismaClient.user.create({
       data: {
         username: parameters.username,
         password: passwordHash,
@@ -133,7 +133,7 @@ export const logInWithUsernameAndPassword = async (parameters: {
     password: parameters.password,
   });
 
-  const user = await prismaclient.user.findUnique({
+  const user = await prismaClient.user.findUnique({
     where: {
       username: parameters.username,
       password: passwordHash,

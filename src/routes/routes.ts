@@ -1,9 +1,10 @@
 import { Hono } from "hono";
 import { authenticationRoutes } from "./authentication-routes";
-import { prismaclient } from "../extras/prisma";
+import { prismaClient } from "../extras/prisma";
 import { jwtsecretKey } from "../../environment";
 import jwt from "jsonwebtoken";
 import { usersRoutes } from "./users-routes";
+import { logger } from "hono/logger";
 export const allRoutes = new Hono();
 
 // hono.post("/authentication/sign-up", async (context) => {
@@ -83,7 +84,7 @@ export const allRoutes = new Hono();
 
 //   await next();
 // })
-
+allRoutes.use(logger());
 allRoutes.route("/authentication", authenticationRoutes);
 
 // allRoutes.get("/health", (context) => {
@@ -121,5 +122,4 @@ allRoutes.get(
   }
 );
 
-allRoutes.route('/users',usersRoutes);
-
+allRoutes.route("/users", usersRoutes);

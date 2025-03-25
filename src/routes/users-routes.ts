@@ -1,34 +1,15 @@
 import { Hono } from "hono";
-import { prismaclient } from "../extras/prisma";
-import { jwtsecretKey } from "../../environment";
-import jwt from "jsonwebtoken";
+import { prismaClient } from "../extras/prisma";
+import { tokenMiddleware } from "./middlewares/token-middleware";
 
-
-export const  usersRoutes = new Hono();
+export const usersRoutes = new Hono();
 
 usersRoutes.get(
-    "",
-    async (context, next) => {
-      const token = context.req.header("token");
-      if (!token) {
-        return context.json(
-          {
-            message: "missing Token",
-          },
-          401
-        );
-      }
-  
-      try {
-        const verified = jwt.verify(token, jwtsecretKey);
-        await next();
-      } catch (e) {
-        return context.json({ message: "Unauthorized or missing token" }, 401);
-      }
-    },
-    async (context) => {
-      const users = await prismaclient.user.findMany();
-  
-      return context.json(users, 200);
-    }
-  );
+  "",
+  tokenMiddleware,
+  async (context) => {
+    const users = await prismaClient.user.findMany();
+
+    return context.json(users, 200);
+  }
+);
